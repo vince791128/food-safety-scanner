@@ -1,0 +1,12 @@
+{
+  "name": "食安掃描警示 App",
+  "short_name": "食安掃描",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0f172a",
+  "lang": "zh-Hant-TW",
+  "icons": [
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
