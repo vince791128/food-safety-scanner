@@ -1,56 +1,24 @@
-# 食安掃描警示｜瀏覽器版 PWA v4 Live Scan
+# 食安掃描警示｜瀏覽器版 v5
 
-這是一個只需瀏覽器網址即可使用的食安掃描工具原型，設計給朋友私下使用，不需要上架 App Store / Google Play。
+這是給朋友使用的瀏覽器版 PWA，不需上架 App Store / Google Play。打開網址後允許相機權限，即可掃商品條碼；若同品項曾受影響，把鏡頭移到有效日期或批號，系統會自動讀取並更新結果。
 
-## v4 重點
+## v5 重點
 
-- 開啟相機後進入「連續掃描模式」。
-- 鏡頭掃到商品條碼後，立即顯示紅／綠／黃／灰結果。
-- 若同品項曾受影響但缺批號或有效日期，使用者不用拍照，只要把同一個鏡頭移到包裝印字處。
-- 系統會每隔數秒讀取鏡頭畫面，用 OCR 自動辨識 EXP、有效日期、Best Before、Lot No.、批號。
-- OCR 辨識到資料後會自動填入欄位並重新比對。
-- 若掃到 GS1-128 / DataMatrix / QR 且包含 AI `01`、`10`、`15`、`17`，會自動解析 GTIN、批號、最佳賞味日／有效日期。
-- 重整瀏覽器或按「立即更新」會重新抓取 `data/recalls.json`。
+- 主畫面只顯示四種大結果：合格、不合格、需確認、無資料。
+- 詳細資料收在「查看判斷明細」內，不干擾一般使用者。
+- 更新失敗時不會直接卡死；會自動改用上次成功載入的本機暫存資料。
+- service worker 改成對 `data/recalls.json` 使用 network-first，且用 canonical cache key，避免 query string 快取造成回退失敗。
 
-## 使用方式
+## 部署
 
-### 本機測試
+1. 將本資料夾內容上傳到 GitHub repository 根目錄。
+2. GitHub Pages 設定：Settings → Pages → Deploy from a branch → main → / root。
+3. 部署完成後用 `https://你的帳號.github.io/你的repo/` 開啟。
 
-```bash
-python3 -m http.server 8080
-```
+## 更新資料
 
-開啟：
-
-```text
-http://localhost:8080
-```
-
-### 給朋友使用
-
-建議部署到 Netlify Drop、GitHub Pages 或 Cloudflare Pages，取得 HTTPS 網址後傳給朋友。
-
-相機掃描需要 HTTPS 或 localhost。若朋友從 LINE 內建瀏覽器開啟相機失敗，請改用 Safari、Chrome 或 Edge。
-
-## 資料更新
-
-正式資料請更新：
-
-```text
-data/recalls.json
-```
-
-建議政策：
-
-```text
-每日 07:00 Asia/Taipei 固定更新
-食安事件期間每日 15:10 Asia/Taipei 補更新
-```
+更新 `data/recalls.json` 後 commit 到 GitHub。朋友重新整理或按右上角「更新」即可抓新版資料。若抓取失敗，頁面會先使用前一次成功資料並顯示提醒。
 
 ## 注意
 
-本工具不得把「未命中」寫成「絕對安全」。正確文案應保留：
-
-```text
-目前公開資料未列入此條碼／批號；資料仍可能滾動更新，請以官方最新公告為準。
-```
+這個工具不能取代官方公告。掃不到不代表安全；請以食藥署、地方衛生局與業者最新公告為準。

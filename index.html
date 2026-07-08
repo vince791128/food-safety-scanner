@@ -4,152 +4,86 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0f172a" />
-  <title>食安掃描警示｜瀏覽器版</title>
-  <meta name="description" content="鏡頭掃到條碼、批號與有效日期後即時顯示食安事件查詢結果的瀏覽器工具。" />
+  <title>食安掃描｜合格不合格</title>
+  <meta name="description" content="開啟相機掃描條碼與效期批號，立即顯示合格、不合格或需確認。" />
   <meta name="robots" content="noindex,nofollow,noarchive" />
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <main class="app-shell">
-    <header class="hero" aria-label="頁首">
-      <div class="brand-row">
-        <div class="brand-mark" aria-hidden="true">食</div>
-        <div>
-          <p class="eyebrow">Food Recall Scanner</p>
-          <h1>食安掃描警示</h1>
-        </div>
+    <header class="topbar" aria-label="頁首">
+      <div>
+        <p class="eyebrow">Food Safety Check</p>
+        <h1>食安掃描</h1>
       </div>
-      <p class="subtitle">打開相機後，<strong>掃到條碼會立即顯示結果</strong>；若還缺批號或有效日期，把鏡頭移到包裝印字處，系統會自動辨識，不用拍照。</p>
+      <button class="tiny-refresh" id="refreshDataBtn" type="button">更新</button>
     </header>
 
-    <section class="update-panel" aria-label="資料更新狀態">
-      <div>
-        <span class="mini-label">資料狀態</span>
-        <strong id="dataFreshness">資料讀取中</strong>
-        <small id="sourceSummary">每日 07:00 更新；事件期間 15:10 補更新</small>
-      </div>
-      <button class="refresh-button" id="refreshDataBtn" type="button">立即更新</button>
+    <section class="data-strip" id="dataStrip" aria-live="polite">
+      <span id="dataFreshness">資料讀取中</span>
+      <small id="sourceSummary">讀取最新資料…</small>
     </section>
 
-    <section class="steps" aria-label="操作步驟">
-      <div class="step-item"><strong>1</strong><span>掃商品條碼</span></div>
-      <div class="step-item"><strong>2</strong><span>鏡頭移到效期／批號</span></div>
-      <div class="step-item"><strong>3</strong><span>看紅綠黃灰結果</span></div>
-    </section>
-
-    <section id="result" class="result-card neutral" aria-live="polite" aria-atomic="true">
+    <section id="result" class="result-card neutral" aria-live="assertive" aria-atomic="true">
+      <div class="result-word" id="resultWord">待掃描</div>
       <div class="result-icon" aria-hidden="true">?</div>
-      <div class="result-content">
-        <p class="result-kicker" id="resultKicker">尚未查詢</p>
-        <h2 id="resultTitle">請先掃描或輸入條碼</h2>
-        <p id="resultMessage">為避免誤判，建議讓鏡頭掃到產品包裝上的批號與有效日期，系統會自動辨識並比對。</p>
-        <ul class="action-list" id="actionList"></ul>
-      </div>
+      <p class="result-title" id="resultTitle">請掃商品條碼</p>
+      <p class="result-message" id="resultMessage">掃到條碼就會立刻顯示結果。若同品項曾受影響，請再把鏡頭移到有效日期或批號。</p>
     </section>
 
-    <section class="card scanner-card" aria-label="條碼掃描區">
-      <div class="section-head">
-        <div>
-          <span class="mini-label">第一步</span>
-          <h3>即時掃描條碼與效期</h3>
-        </div>
-        <span class="secure-note">需 HTTPS</span>
-      </div>
-      <div class="scanner-toolbar">
-        <button class="primary" id="startScanBtn" type="button">開啟連續掃描</button>
-        <button class="secondary" id="stopScanBtn" type="button" disabled>停止</button>
-      </div>
+    <section class="scanner-card" aria-label="掃描區">
       <div class="camera-frame">
         <video id="preview" muted playsinline aria-label="相機預覽"></video>
-        <div class="scan-frame-line" aria-hidden="true"><span></span></div>
+        <div class="scan-box" aria-hidden="true"><span></span></div>
       </div>
-      <div class="live-ocr-panel" id="liveOcrPanel" aria-live="polite">
-        <span id="liveOcrBadge">待命</span>
-        <strong id="liveOcrStatus">開啟相機後會自動掃條碼</strong>
-        <small id="liveOcrHint">掃到條碼後，若需要批號／效期，請把鏡頭移到包裝印字處。</small>
+      <div class="scan-actions">
+        <button class="primary" id="startScanBtn" type="button">開始掃描</button>
+        <button class="secondary" id="stopScanBtn" type="button" disabled>停止</button>
       </div>
-      <p class="helper" id="scannerHint">鏡頭掃到條碼會立即查詢；若同品項曾受影響，請不要關閉相機，直接把鏡頭移到有效日期或批號印字處，系統會自動辨識。</p>
+      <p class="scan-status" id="liveOcrStatus">尚未開啟相機</p>
+      <p class="hint" id="liveOcrHint">結果只顯示合格／不合格；詳細資料收在下方。</p>
     </section>
 
-    <section class="card ocr-card" aria-label="效期與批號即時辨識區">
-      <div class="section-head">
-        <div>
-          <span class="mini-label">第二步｜不用拍照</span>
-          <h3>鏡頭掃到效期／批號就自動帶入</h3>
-        </div>
-        <span class="secure-note privacy">影像在瀏覽器端處理</span>
-      </div>
-      <p class="helper strong-helper">掃到條碼後，把同一個鏡頭移到包裝上的「有效日期、EXP、Best Before、Lot No.、批號」。系統會每隔數秒讀取畫面，自動帶入並重新比對。</p>
-      <div class="ocr-actions">
-        <button class="primary" id="startLiveTextBtn" type="button">只掃效期／批號</button>
-        <button class="secondary" id="clearOcrBtn" type="button">清除辨識</button>
-      </div>
-      <div class="ocr-grid">
-        <div class="ocr-preview live-mode" id="ocrPreview" aria-label="即時 OCR 狀態">尚未開始即時辨識</div>
-        <div class="ocr-status-box">
-          <span class="mini-label">即時辨識狀態</span>
-          <strong id="ocrStatus">待命</strong>
-          <p id="ocrHint">請讓日期與批號水平、清楚、充滿畫面。即時 OCR 可能誤讀，紅色命中前仍建議肉眼確認。</p>
-        </div>
-      </div>
-      <details class="ocr-text-wrap">
-        <summary>查看即時 OCR 讀到的文字</summary>
-        <pre id="ocrText">尚無文字</pre>
-      </details>
-    </section>
-
-    <section class="card form-card" aria-label="自動帶入與手動修正區">
-      <div class="section-head">
-        <div>
-          <span class="mini-label">自動帶入／必要時修正</span>
-          <h3>條碼、批號與效期</h3>
-        </div>
-      </div>
-
-      <label for="barcodeInput">條碼 GTIN / EAN</label>
+    <details class="manual-card">
+      <summary>手動查詢或修正</summary>
+      <label for="barcodeInput">條碼</label>
       <div class="inline-input">
         <input id="barcodeInput" inputmode="numeric" autocomplete="off" placeholder="例如 4712867148851" />
         <button id="lookupBtn" type="button">查詢</button>
       </div>
-
       <div class="grid-2">
         <div>
-          <label for="lotInput">批號 Lot No. <span>OCR 會自動填入</span></label>
-          <input id="lotInput" autocomplete="off" autocapitalize="characters" placeholder="例如 20270409 或 C1140426K" />
+          <label for="lotInput">批號</label>
+          <input id="lotInput" autocomplete="off" autocapitalize="characters" placeholder="例如 C1140426K" />
         </div>
         <div>
-          <label for="expiryInput">有效日期 <span>OCR 會自動填入</span></label>
+          <label for="expiryInput">有效日期</label>
           <input id="expiryInput" type="date" />
         </div>
       </div>
-
-      <details>
-        <summary>測試用示範條碼</summary>
+      <div class="utility-row">
+        <button class="secondary full" id="clearOcrBtn" type="button">清除批號／日期</button>
+        <button class="secondary full" id="startLiveTextBtn" type="button">只掃日期文字</button>
+      </div>
+      <details class="samples-detail">
+        <summary>測試條碼</summary>
         <div class="sample-list" id="sampleList"></div>
       </details>
-    </section>
+    </details>
 
-    <section class="card details-card" id="detailsCard" hidden>
-      <div class="section-head compact">
-        <div>
-          <span class="mini-label">比對明細</span>
-          <h3>系統如何判斷</h3>
-        </div>
-      </div>
+    <details class="detail-card" id="detailsCard">
+      <summary>查看判斷明細</summary>
       <dl id="detailsList"></dl>
       <div class="source-box" id="sourceBox"></div>
-    </section>
-
-    <section class="legend" aria-label="顏色與狀態說明">
-      <div class="legend-item pass"><strong>✓ 綠色</strong><span>目前未命中受影響批次</span></div>
-      <div class="legend-item fail"><strong>! 紅色</strong><span>受影響／不合格，請勿食用</span></div>
-      <div class="legend-item warn"><strong>! 黃色</strong><span>同品項曾受影響，需補批號或效期</span></div>
-      <div class="legend-item unknown"><strong>? 灰色</strong><span>資料不足或尚未收錄</span></div>
-    </section>
+      <details class="ocr-log">
+        <summary>OCR 文字紀錄</summary>
+        <pre id="ocrText">尚無文字</pre>
+      </details>
+    </details>
 
     <footer>
-      <p>本工具為朋友間使用的瀏覽器版查詢工具。資料仍可能滾動更新，查詢結果請以食藥署、地方衛生局與業者最新公告為準。</p>
+      <p>掃不到不代表安全；請以食藥署、地方衛生局與業者最新公告為準。</p>
     </footer>
   </main>
 

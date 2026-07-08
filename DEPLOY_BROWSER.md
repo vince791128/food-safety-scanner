@@ -1,26 +1,33 @@
-# 瀏覽器版部署說明
+# GitHub Pages 部署注意事項
 
-## 最快方式：Netlify Drop
+## 正確檔案結構
 
-1. 解壓縮 ZIP。
-2. 將 `food_safety_scanner_app` 整個資料夾拖到 Netlify Drop。
-3. Netlify 會產生 HTTPS 網址。
-4. 把網址傳給朋友。
-
-## 為什麼需要 HTTPS
-
-此工具使用手機相機連續掃描條碼與包裝文字。多數行動瀏覽器要求相機 API 必須在 HTTPS 或 localhost 等安全環境下使用。
-
-## 更新資料
-
-只要更新部署中的：
+`index.html` 必須在 repository 根目錄：
 
 ```text
-data/recalls.json
+food-safety-scanner/
+├── index.html
+├── styles.css
+├── app.js
+├── service-worker.js
+├── manifest.json
+├── data/recalls.json
+└── assets/icon.svg
 ```
 
-朋友重新整理瀏覽器，或按 App 內的「立即更新」，就會強制重新抓最新版資料。
+不要變成：
 
-## 隱私
+```text
+food-safety-scanner/
+└── food_safety_scanner_app/
+    └── index.html
+```
 
-v4 的即時 OCR 在瀏覽器端從相機畫面擷取 frame 辨識；此原型不把照片或影像上傳到你的伺服器。
+否則 `data/recalls.json` 可能讀取失敗。
+
+## 更新失敗排查
+
+1. 確認網址可以直接打開：`https://你的帳號.github.io/你的repo/data/recalls.json`
+2. 確認 JSON 格式正確。
+3. 若剛更新 GitHub Pages，等部署完成再重整。
+4. 手機瀏覽器按右上角「更新」，抓不到新版時會自動使用上次成功資料。
