@@ -1,18 +1,21 @@
-# GitHub Pages 上傳方式
+# 直接上傳 GitHub 步驟
 
-把本資料夾內的所有檔案與資料夾上傳到 GitHub repository 根目錄。
+1. 下載 ZIP 並解壓縮。
+2. 打開解壓縮後的資料夾。
+3. 全選裡面的所有檔案與資料夾。
+4. 拖到 GitHub repository 的 **Add file → Upload files**。
+5. Commit changes。
+6. 到 **Settings → Pages**，確認 Source 為 `Deploy from a branch`、Branch 為 `main`、Folder 為 `/ root`。
+7. 部署完成後測試：
 
-正確上傳後，GitHub 根目錄應看到：
-- index.html
-- app.js
-- styles.css
-- service-worker.js
-- manifest.json
-- data/recalls.json
-- assets/icon.svg
-- .nojekyll
+```text
+https://你的帳號.github.io/data/recalls.json
+```
 
-不要只上傳 ZIP，也不要讓檔案被包在 github_pages_upload_ready 或 food_safety_scanner_app 資料夾裡。
+或專案頁：
 
-測試資料是否可讀：
+```text
 https://你的帳號.github.io/你的repo名稱/data/recalls.json
+```
+
+只要看得到 JSON，App 就可以讀取資料。

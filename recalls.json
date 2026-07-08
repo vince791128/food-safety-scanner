@@ -6,48 +6,55 @@
     "official_update_policy": "食安事件期間每日 07:00 固定更新，15:10 補更新",
     "sources": [
       "https://www.fda.gov.tw/TC/newsContent.aspx?cid=4&id=t634440",
-      "https://www.fda.gov.tw/TC/newsContent.aspx?cid=4&id=t634424"
+      "https://www.fda.gov.tw/TC/newsContent.aspx?cid=4&id=t634424",
+      "https://www.cfs.gov.hk/english/rc/subject/files/20260707_2.pdf"
     ],
-    "disclaimer": "示範資料，不是完整官方清單。正式上線須由後台同步官方與業者公告。"
+    "disclaimer": "示範資料，不是完整官方清單。正式上線須由後台同步官方、地方衛生局與業者公告。"
   },
   "products": [
     {
       "product_id": "P-001",
-      "company_name": "一本鮮 / 蔥阿伯",
+      "company_name": "一本鮮國際實業有限公司",
       "brand_name": "蔥阿伯",
       "product_name": "優選水餃高麗菜豬肉 800g",
+      "product_name_aliases": ["一本鮮", "蔥阿伯", "優選水餃", "高麗菜豬肉", "水餃", "高麗菜"],
       "barcode_gtin": "4712867148851",
       "category": "冷凍食品",
       "affected_batches": [
         { "lot_no": "", "expiry_date": "2027-04-08", "status": "affected" }
       ],
       "source_confidence": "B",
+      "source_urls": ["https://www.cfs.gov.hk/english/rc/subject/files/20260707_2.pdf"],
       "source_note": "條碼與效期來自公開受影響產品彙整；正式版需回填官方清單與業者公告。"
     },
     {
       "product_id": "P-002",
-      "company_name": "一本鮮 / 蔥阿伯",
+      "company_name": "一本鮮國際實業有限公司",
       "brand_name": "蔥阿伯",
       "product_name": "優選水餃韭菜豬肉 800g",
+      "product_name_aliases": ["一本鮮", "蔥阿伯", "優選水餃", "韭菜豬肉", "水餃", "韭菜"],
       "barcode_gtin": "4712867148868",
       "category": "冷凍食品",
       "affected_batches": [
         { "lot_no": "", "expiry_date": "2027-04-08", "status": "affected" }
       ],
       "source_confidence": "B",
+      "source_urls": ["https://www.cfs.gov.hk/english/rc/subject/files/20260707_2.pdf"],
       "source_note": "條碼與效期來自公開受影響產品彙整；正式版需回填官方清單與業者公告。"
     },
     {
       "product_id": "P-003",
-      "company_name": "一本鮮 / 蔥阿伯",
+      "company_name": "一本鮮國際實業有限公司",
       "brand_name": "蔥阿伯",
       "product_name": "優選水餃青蔥豬肉 800g",
+      "product_name_aliases": ["一本鮮", "蔥阿伯", "優選水餃", "青蔥豬肉", "水餃", "青蔥"],
       "barcode_gtin": "4712867148875",
       "category": "冷凍食品",
       "affected_batches": [
         { "lot_no": "", "expiry_date": "2027-04-08", "status": "affected" }
       ],
       "source_confidence": "B",
+      "source_urls": ["https://www.cfs.gov.hk/english/rc/subject/files/20260707_2.pdf"],
       "source_note": "條碼與效期來自公開受影響產品彙整；正式版需回填官方清單與業者公告。"
     },
     {
@@ -55,24 +62,18 @@
       "company_name": "中聯油脂",
       "brand_name": "中聯油脂",
       "product_name": "大豆沙拉油",
+      "product_name_aliases": ["中聯", "中聯油脂", "大豆沙拉油", "沙拉油", " soybean oil "],
       "barcode_gtin": "",
       "category": "食用油",
       "affected_batches": [
         { "lot_no": "315-1150404", "expiry_date": "2026-09-30", "status": "affected" }
       ],
       "source_confidence": "A",
+      "source_urls": [
+        "https://www.fda.gov.tw/TC/newsContent.aspx?cid=4&id=t634440",
+        "https://www.fda.gov.tw/TC/newsContent.aspx?cid=4&id=t634424"
+      ],
       "source_note": "官方資料以品名、批號、有效日期辨識；未公開條碼。"
-    },
-    {
-      "product_id": "P-005",
-      "company_name": "測試公司",
-      "brand_name": "Demo Safe",
-      "product_name": "示範合格商品",
-      "barcode_gtin": "4710000000000",
-      "category": "測試資料",
-      "affected_batches": [],
-      "source_confidence": "DEMO",
-      "source_note": "此筆只用於測試綠色合格提示，不代表真實食品安全狀態。"
     }
   ]
 }

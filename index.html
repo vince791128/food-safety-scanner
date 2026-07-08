@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0f172a" />
   <title>食安掃描｜合格不合格</title>
-  <meta name="description" content="開啟相機掃描條碼與效期批號，立即顯示合格、不合格或需確認。" />
+  <meta name="description" content="一鍵掃描條碼、品名、效期與批號，立即顯示合格、不合格、需確認或無資料。" />
   <meta name="robots" content="noindex,nofollow,noarchive" />
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="styles.css" />
@@ -22,14 +22,24 @@
 
     <section class="data-strip" id="dataStrip" aria-live="polite">
       <span id="dataFreshness">資料讀取中</span>
-      <small id="sourceSummary">讀取最新資料…</small>
+      <small id="sourceSummary">正在抓取 recalls.json…</small>
     </section>
 
     <section id="result" class="result-card neutral" aria-live="assertive" aria-atomic="true">
       <div class="result-word" id="resultWord">待掃描</div>
       <div class="result-icon" aria-hidden="true">?</div>
-      <p class="result-title" id="resultTitle">請掃商品條碼</p>
-      <p class="result-message" id="resultMessage">掃到條碼就會立刻顯示結果。若同品項曾受影響，請再把鏡頭移到有效日期或批號。</p>
+      <p class="result-title" id="resultTitle">按下方開始</p>
+      <p class="result-message" id="resultMessage">一鍵掃描，掃到足夠資訊就會直接判斷。</p>
+    </section>
+
+    <section class="next-card" aria-live="polite">
+      <p class="next-label">下一步</p>
+      <p class="next-action" id="nextAction">請先掃商品條碼</p>
+      <div class="steps" aria-label="掃描進度">
+        <div class="step" id="stepBarcode"><span>1</span><b>條碼</b><small>未掃</small></div>
+        <div class="step" id="stepName"><span>2</span><b>品名</b><small>未掃</small></div>
+        <div class="step" id="stepBatch"><span>3</span><b>效期/批號</b><small>未掃</small></div>
+      </div>
     </section>
 
     <section class="scanner-card" aria-label="掃描區">
@@ -38,11 +48,11 @@
         <div class="scan-box" aria-hidden="true"><span></span></div>
       </div>
       <div class="scan-actions">
-        <button class="primary" id="startScanBtn" type="button">開始掃描</button>
+        <button class="primary" id="startScanBtn" type="button">一鍵開始掃描</button>
         <button class="secondary" id="stopScanBtn" type="button" disabled>停止</button>
       </div>
       <p class="scan-status" id="liveOcrStatus">尚未開啟相機</p>
-      <p class="hint" id="liveOcrHint">結果只顯示合格／不合格；詳細資料收在下方。</p>
+      <p class="hint" id="liveOcrHint">掃描順序：條碼 → 包裝正面品名 → 效期或批號。若已不合格會自動停止。</p>
     </section>
 
     <details class="manual-card">
@@ -52,10 +62,12 @@
         <input id="barcodeInput" inputmode="numeric" autocomplete="off" placeholder="例如 4712867148851" />
         <button id="lookupBtn" type="button">查詢</button>
       </div>
+      <label for="nameInput">品名關鍵字</label>
+      <input id="nameInput" autocomplete="off" placeholder="例如 蔥阿伯 高麗菜豬肉" />
       <div class="grid-2">
         <div>
           <label for="lotInput">批號</label>
-          <input id="lotInput" autocomplete="off" autocapitalize="characters" placeholder="例如 C1140426K" />
+          <input id="lotInput" autocomplete="off" autocapitalize="characters" placeholder="例如 315-1150404" />
         </div>
         <div>
           <label for="expiryInput">有效日期</label>
@@ -63,8 +75,8 @@
         </div>
       </div>
       <div class="utility-row">
-        <button class="secondary full" id="clearOcrBtn" type="button">清除批號／日期</button>
-        <button class="secondary full" id="startLiveTextBtn" type="button">只掃日期文字</button>
+        <button class="secondary full" id="clearAllBtn" type="button">全部清除</button>
+        <button class="secondary full" id="clearOcrBtn" type="button">只清除效期/批號</button>
       </div>
       <details class="samples-detail">
         <summary>測試條碼</summary>
@@ -77,13 +89,13 @@
       <dl id="detailsList"></dl>
       <div class="source-box" id="sourceBox"></div>
       <details class="ocr-log">
-        <summary>OCR 文字紀錄</summary>
+        <summary>鏡頭文字紀錄</summary>
         <pre id="ocrText">尚無文字</pre>
       </details>
     </details>
 
     <footer>
-      <p>掃不到不代表安全；請以食藥署、地方衛生局與業者最新公告為準。</p>
+      <p>無資料不代表安全；請以食藥署、地方衛生局與業者最新公告為準。</p>
     </footer>
   </main>
 

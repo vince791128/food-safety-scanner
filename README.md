@@ -1,24 +1,56 @@
-# 食安掃描警示｜瀏覽器版 v5.2
+# 食安掃描 v6｜逐項掃描簡化版
 
-這是給朋友使用的瀏覽器版 PWA，不需上架 App Store / Google Play。打開網址後允許相機權限，即可掃商品條碼；若同品項曾受影響，把鏡頭移到有效日期或批號，系統會自動讀取並更新結果。
+這版是 GitHub Pages 直接上傳版。目標是讓使用者只看到最重要的判斷：
 
-## v5.2 重點
+- 合格
+- 不合格
+- 需確認
+- 無資料
 
-- 主畫面只顯示四種大結果：合格、不合格、需確認、無資料。
-- 詳細資料收在「查看判斷明細」內，不干擾一般使用者。
-- 更新失敗時不會直接卡死；會自動改用上次成功載入的本機暫存資料。
-- service worker 改成對 `data/recalls.json` 使用 network-first，且用 canonical cache key，避免 query string 快取造成回退失敗。
+## 使用流程
 
-## 部署
+1. 按「一鍵開始掃描」
+2. 先掃商品條碼
+3. 若需要，繼續掃包裝正面的品名
+4. 若需要，繼續掃有效日期或批號
+5. 一旦命中不合格，系統會自動停止掃描
 
-1. 將本資料夾內容上傳到 GitHub repository 根目錄。
-2. GitHub Pages 設定：Settings → Pages → Deploy from a branch → main → / root。
-3. 部署完成後用 `https://你的帳號.github.io/你的repo/` 開啟。
+## GitHub Pages 上傳方式
+
+請把本資料夾內的所有檔案直接上傳到 repository 根目錄，不要再包一層資料夾。
+
+正確：
+
+```text
+index.html
+app.js
+styles.css
+service-worker.js
+manifest.json
+data/recalls.json
+recalls.json
+assets/icon.svg
+.nojekyll
+```
+
+錯誤：
+
+```text
+food_safety_scanner_app/index.html
+food_safety_scanner_app/data/recalls.json
+```
 
 ## 更新資料
 
-更新 `data/recalls.json` 後 commit 到 GitHub。朋友重新整理或按右上角「更新」即可抓新版資料。若抓取失敗，頁面會先使用前一次成功資料並顯示提醒。
+只更新食安資料時，改這兩個檔案即可：
+
+```text
+data/recalls.json
+recalls.json
+```
+
+兩個檔案內容保持一致，GitHub Pages 部署後，朋友重新整理網頁即可讀取新版資料。
 
 ## 注意
 
-這個工具不能取代官方公告。掃不到不代表安全；請以食藥署、地方衛生局與業者最新公告為準。
+這是示範資料，不是完整官方清單。正式使用前，應由後台整理食藥署、地方衛生局與業者公告後更新 recalls.json。

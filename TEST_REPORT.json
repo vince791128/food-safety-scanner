@@ -1,0 +1,79 @@
+{
+  "total": 11,
+  "passed": 11,
+  "failed": 0,
+  "tests": [
+    {
+      "case": "資料 schema",
+      "got": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "case": "問題條碼但缺效期",
+      "got": "需確認",
+      "expected": "需確認",
+      "pass": true
+    },
+    {
+      "case": "問題條碼 + 問題效期",
+      "got": "不合格",
+      "expected": "不合格",
+      "pass": true
+    },
+    {
+      "case": "問題條碼 + 非問題效期",
+      "got": "合格",
+      "expected": "合格",
+      "pass": true
+    },
+    {
+      "case": "品名 + 問題效期",
+      "got": "不合格",
+      "expected": "不合格",
+      "pass": true
+    },
+    {
+      "case": "官方無條碼品名 + 批號 + 效期",
+      "got": "不合格",
+      "expected": "不合格",
+      "pass": true
+    },
+    {
+      "case": "未收錄條碼",
+      "got": "無資料",
+      "expected": "無資料",
+      "pass": true
+    },
+    {
+      "case": "GS1 AI 01/17 解析",
+      "got": {
+        "gtin": "4712867148851",
+        "expiry": "2027-04-08"
+      },
+      "expected": {
+        "gtin": "4712867148851",
+        "expiry": "2027-04-08"
+      },
+      "pass": true
+    },
+    {
+      "case": "OCR 日期解析",
+      "got": "2027-04-08",
+      "expected": "2027-04-08",
+      "pass": true
+    },
+    {
+      "case": "OCR 品名匹配",
+      "got": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "case": "不合格提前停止規則",
+      "got": true,
+      "expected": true,
+      "pass": true
+    }
+  ]
+}
