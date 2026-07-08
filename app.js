@@ -1,4 +1,4 @@
-const APP_VERSION = 'browser-pwa-v5-1-data-path-fix';
+const APP_VERSION = 'browser-pwa-v5-2-github-pages-robust-data-path';
 const DATA_PATH = 'data/recalls.json';
 const LOCAL_SNAPSHOT_KEY = 'foodSafetyRecallsSnapshotV1';
 
@@ -79,10 +79,26 @@ async function loadData({ force = false, allowSnapshot = true } = {}) {
 
 function buildDataUrls() {
   const base = new URL('.', window.location.href);
-  const currentDirUrl = new URL(DATA_PATH, base).href;
-  const pathname = window.location.pathname;
-  const rootGuess = `${window.location.origin}${pathname.replace(/\/[^/]*$/, '/')}${DATA_PATH}`;
-  return [...new Set([currentDirUrl, rootGuess])];
+  const origin = window.location.origin;
+  const pathParts = window.location.pathname.split('/').filter(Boolean);
+  const repoBase = pathParts.length ? `${origin}/${pathParts[0]}/` : `${origin}/`;
+
+  // GitHub Pages 常見情境：
+  // 1) 使用者頁面： https://帳號.github.io/  → /data/recalls.json
+  // 2) 專案頁面：   https://帳號.github.io/repo/ → /repo/data/recalls.json
+  // 3) 上傳時不小心把 recalls.json 放在根目錄 → /recalls.json
+  // 4) 上傳時不小心多包一層資料夾 → /github_pages_upload_ready/data/recalls.json
+  const candidates = [
+    new URL('data/recalls.json', base).href,
+    new URL('recalls.json', base).href,
+    `${repoBase}data/recalls.json`,
+    `${repoBase}recalls.json`,
+    `${origin}/data/recalls.json`,
+    `${origin}/recalls.json`,
+    `${repoBase}github_pages_upload_ready/data/recalls.json`,
+    `${repoBase}food_safety_scanner_app/data/recalls.json`,
+  ];
+  return [...new Set(candidates)];
 }
 
 async function fetchFreshData(force) {
