@@ -1,5 +1,5 @@
-const APP_VERSION = 'browser-pwa-v5-simple-result';
-const DATA_PATH = './data/recalls.json';
+const APP_VERSION = 'browser-pwa-v5-1-data-path-fix';
+const DATA_PATH = 'data/recalls.json';
 const LOCAL_SNAPSHOT_KEY = 'foodSafetyRecallsSnapshotV1';
 
 const state = {
@@ -72,37 +72,86 @@ async function loadData({ force = false, allowSnapshot = true } = {}) {
       }
     }
     setRefreshState(false);
-    setDataStrip('error', '資料讀取失敗', '找不到 recalls.json，請確認 GitHub Pages 檔案路徑或稍後重整。');
+    setDataStrip('error', '資料讀取失敗', String(networkError.message || networkError).slice(0, 180));
     throw networkError;
   }
 }
 
+function buildDataUrls() {
+  const base = new URL('.', window.location.href);
+  const currentDirUrl = new URL(DATA_PATH, base).href;
+  const pathname = window.location.pathname;
+  const rootGuess = `${window.location.origin}${pathname.replace(/\/[^/]*$/, '/')}${DATA_PATH}`;
+  return [...new Set([currentDirUrl, rootGuess])];
+}
+
 async function fetchFreshData(force) {
-  const urls = [
-    `${DATA_PATH}?v=${encodeURIComponent(APP_VERSION)}&t=${Date.now()}`,
-    DATA_PATH,
-  ];
-  let lastError = null;
-  for (const url of urls) {
-    try {
-      const response = await fetch(url, {
-        cache: force ? 'reload' : 'no-store',
-        headers: { 'Cache-Control': 'no-cache' },
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const data = await response.json();
-      validateRecallData(data);
-      return data;
-    } catch (err) {
-      lastError = err;
+  const urls = buildDataUrls();
+  const attempts = [];
+  for (const baseUrl of urls) {
+    const trialUrls = [
+      `${baseUrl}?v=${encodeURIComponent(APP_VERSION)}&t=${Date.now()}`,
+      baseUrl,
+    ];
+    for (const url of trialUrls) {
+      try {
+        const response = await fetch(url, {
+          cache: force ? 'reload' : 'no-store',
+          headers: { 'Cache-Control': 'no-cache' },
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        const normalized = normalizeRecallData(data);
+        validateRecallData(normalized);
+        window.__lastRecallDataUrl = baseUrl;
+        return normalized;
+      } catch (err) {
+        attempts.push(`${url} → ${err.message}`);
+      }
     }
   }
-  throw lastError || new Error('資料讀取失敗');
+  throw new Error(`資料讀取失敗：${attempts.join(' | ')}`);
+}
+
+function normalizeRecallData(data) {
+  // Official app schema
+  if (data && data.metadata && Array.isArray(data.products)) return data;
+
+  // Allow a simple product array as recalls.json for manual maintenance.
+  if (Array.isArray(data)) {
+    return {
+      metadata: {
+        event_name: '自訂食安清單',
+        last_updated_at: new Date().toISOString(),
+        official_update_policy: '由 GitHub data/recalls.json 更新',
+        sources: [],
+        disclaimer: '自訂 JSON 陣列已自動轉換。'
+      },
+      products: data
+    };
+  }
+
+  // Allow common wrapper keys: items / data / records.
+  const list = data?.items || data?.data || data?.records;
+  if (Array.isArray(list)) {
+    return {
+      metadata: data.metadata || {
+        event_name: data.event_name || '自訂食安清單',
+        last_updated_at: data.last_updated_at || new Date().toISOString(),
+        official_update_policy: '由 GitHub data/recalls.json 更新',
+        sources: data.sources || [],
+        disclaimer: '自訂 JSON 已自動轉換。'
+      },
+      products: list
+    };
+  }
+
+  return data;
 }
 
 function validateRecallData(data) {
   if (!data || !data.metadata || !Array.isArray(data.products)) {
-    throw new Error('recalls.json 格式錯誤');
+    throw new Error('recalls.json 格式錯誤：根層需包含 metadata 與 products 陣列，或直接提供產品陣列。');
   }
 }
 
@@ -669,14 +718,14 @@ els.refreshDataBtn?.addEventListener('click', async () => {
     }
   } catch (err) {
     console.error(err);
-    showResult('neutral', '無資料', '?', '資料更新失敗', '找不到 recalls.json，請檢查部署路徑。');
+    showResult('neutral', '無資料', '?', '資料更新失敗', String(err.message || err).slice(0, 120));
   }
 });
 
 window.addEventListener('pageshow', () => {
   loadData({ force: true, allowSnapshot: true }).catch((err) => {
     console.error(err);
-    showResult('neutral', '無資料', '?', '資料讀取失敗', '請確認 data/recalls.json 有上傳到網站根目錄。');
+    showResult('neutral', '無資料', '?', '資料讀取失敗', String(err.message || err).slice(0, 120));
   });
 });
 window.addEventListener('pagehide', stopScanner);

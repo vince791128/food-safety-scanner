@@ -1,12 +1,11 @@
-const CACHE_NAME = 'food-safety-scanner-v5-simple-result';
+const CACHE_NAME = 'food-safety-scanner-v5-1-data-path-fix';
 const ASSETS = [
   './',
   './index.html',
   './styles.css',
   './app.js',
   './manifest.json',
-  './assets/icon.svg',
-  './data/recalls.json'
+  './assets/icon.svg'
 ];
 
 self.addEventListener('install', (event) => {
@@ -32,7 +31,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
   if (url.pathname.endsWith('/data/recalls.json')) {
-    event.respondWith(networkFirstCanonical(event.request, './data/recalls.json'));
+    event.respondWith(networkFirstData(event.request));
     return;
   }
 
@@ -43,6 +42,21 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(staleWhileRevalidate(event.request));
 });
+
+
+async function networkFirstData(request) {
+  try {
+    const response = await fetch(request, { cache: 'no-store' });
+    if (response && response.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      await cache.put(request.url.split('?')[0], response.clone());
+    }
+    return response;
+  } catch (error) {
+    const cache = await caches.open(CACHE_NAME);
+    return (await cache.match(request.url.split('?')[0])) || Promise.reject(error);
+  }
+}
 
 async function networkFirstCanonical(request, canonicalUrl) {
   const canonicalRequest = new Request(canonicalUrl, { cache: 'reload' });
