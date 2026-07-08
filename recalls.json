@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "event_id": "TW-FDA-2026-ZHONG-LIAN-OIL-BAP",
+    "event_name": "中聯油脂大豆沙拉油苯(a)駢芘事件",
+    "last_updated_at": "2026-07-08T07:00:00+08:00",
+    "official_update_policy": "食安事件期間每日 07:00 固定更新，15:10 補更新",
+    "sources": [
+      "https://www.fda.gov.tw/TC/newsContent.aspx?cid=4&id=t634440",
+      "https://www.fda.gov.tw/TC/newsContent.aspx?cid=4&id=t634424"
+    ],
+    "disclaimer": "示範資料，不是完整官方清單。正式上線須由後台同步官方與業者公告。"
+  },
+  "products": [
+    {
+      "product_id": "P-001",
+      "company_name": "一本鮮 / 蔥阿伯",
+      "brand_name": "蔥阿伯",
+      "product_name": "優選水餃高麗菜豬肉 800g",
+      "barcode_gtin": "4712867148851",
+      "category": "冷凍食品",
+      "affected_batches": [
+        { "lot_no": "", "expiry_date": "2027-04-08", "status": "affected" }
+      ],
+      "source_confidence": "B",
+      "source_note": "條碼與效期來自公開受影響產品彙整；正式版需回填官方清單與業者公告。"
+    },
+    {
+      "product_id": "P-002",
+      "company_name": "一本鮮 / 蔥阿伯",
+      "brand_name": "蔥阿伯",
+      "product_name": "優選水餃韭菜豬肉 800g",
+      "barcode_gtin": "4712867148868",
+      "category": "冷凍食品",
+      "affected_batches": [
+        { "lot_no": "", "expiry_date": "2027-04-08", "status": "affected" }
+      ],
+      "source_confidence": "B",
+      "source_note": "條碼與效期來自公開受影響產品彙整；正式版需回填官方清單與業者公告。"
+    },
+    {
+      "product_id": "P-003",
+      "company_name": "一本鮮 / 蔥阿伯",
+      "brand_name": "蔥阿伯",
+      "product_name": "優選水餃青蔥豬肉 800g",
+      "barcode_gtin": "4712867148875",
+      "category": "冷凍食品",
+      "affected_batches": [
+        { "lot_no": "", "expiry_date": "2027-04-08", "status": "affected" }
+      ],
+      "source_confidence": "B",
+      "source_note": "條碼與效期來自公開受影響產品彙整；正式版需回填官方清單與業者公告。"
+    },
+    {
+      "product_id": "P-004",
+      "company_name": "中聯油脂",
+      "brand_name": "中聯油脂",
+      "product_name": "大豆沙拉油",
+      "barcode_gtin": "",
+      "category": "食用油",
+      "affected_batches": [
+        { "lot_no": "315-1150404", "expiry_date": "2026-09-30", "status": "affected" }
+      ],
+      "source_confidence": "A",
+      "source_note": "官方資料以品名、批號、有效日期辨識；未公開條碼。"
+    },
+    {
+      "product_id": "P-005",
+      "company_name": "測試公司",
+      "brand_name": "Demo Safe",
+      "product_name": "示範合格商品",
+      "barcode_gtin": "4710000000000",
+      "category": "測試資料",
+      "affected_batches": [],
+      "source_confidence": "DEMO",
+      "source_note": "此筆只用於測試綠色合格提示，不代表真實食品安全狀態。"
+    }
+  ]
+}
